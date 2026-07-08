@@ -14,7 +14,108 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      cases: {
+        Row: {
+          cap_bac_lanh_dao: string
+          chuc_vu_lanh_dao: string
+          co_quan_trung_cau: string
+          co_quan_trung_cau_khac: string | null
+          created_at: string
+          folder_path: string | null
+          giam_dinh_vien: Json
+          ho_ten_lanh_dao: string
+          id: string
+          linh_vuc: string
+          ngay_bat_dau: string
+          ngay_bat_dau_la_ngay_mo: boolean
+          ngay_ket_thuc: string
+          ngay_nhan: string
+          ngay_nhan_la_ngay_mo: boolean
+          nhap_phan_mem: string
+          nop_luu: string
+          quyet_dinh_lap_so: number
+          quyet_dinh_trung_cau: string
+          scan: string
+          so_dang_ky_a: number
+          so_dang_ky_full: string
+          so_hoa: string
+          so_luu: string | null
+          tinh_trang_giao: string
+          trich_yeu: string
+          tro_ly: Json
+          updated_at: string
+          vu_so_full: string
+          vu_so_x: number
+          vu_so_yy: string
+        }
+        Insert: {
+          cap_bac_lanh_dao: string
+          chuc_vu_lanh_dao: string
+          co_quan_trung_cau: string
+          co_quan_trung_cau_khac?: string | null
+          created_at?: string
+          folder_path?: string | null
+          giam_dinh_vien?: Json
+          ho_ten_lanh_dao: string
+          id?: string
+          linh_vuc: string
+          ngay_bat_dau: string
+          ngay_bat_dau_la_ngay_mo?: boolean
+          ngay_ket_thuc: string
+          ngay_nhan: string
+          ngay_nhan_la_ngay_mo?: boolean
+          nhap_phan_mem?: string
+          nop_luu?: string
+          quyet_dinh_lap_so: number
+          quyet_dinh_trung_cau: string
+          scan?: string
+          so_dang_ky_a: number
+          so_dang_ky_full: string
+          so_hoa?: string
+          so_luu?: string | null
+          tinh_trang_giao?: string
+          trich_yeu: string
+          tro_ly?: Json
+          updated_at?: string
+          vu_so_full: string
+          vu_so_x: number
+          vu_so_yy: string
+        }
+        Update: {
+          cap_bac_lanh_dao?: string
+          chuc_vu_lanh_dao?: string
+          co_quan_trung_cau?: string
+          co_quan_trung_cau_khac?: string | null
+          created_at?: string
+          folder_path?: string | null
+          giam_dinh_vien?: Json
+          ho_ten_lanh_dao?: string
+          id?: string
+          linh_vuc?: string
+          ngay_bat_dau?: string
+          ngay_bat_dau_la_ngay_mo?: boolean
+          ngay_ket_thuc?: string
+          ngay_nhan?: string
+          ngay_nhan_la_ngay_mo?: boolean
+          nhap_phan_mem?: string
+          nop_luu?: string
+          quyet_dinh_lap_so?: number
+          quyet_dinh_trung_cau?: string
+          scan?: string
+          so_dang_ky_a?: number
+          so_dang_ky_full?: string
+          so_hoa?: string
+          so_luu?: string | null
+          tinh_trang_giao?: string
+          trich_yeu?: string
+          tro_ly?: Json
+          updated_at?: string
+          vu_so_full?: string
+          vu_so_x?: number
+          vu_so_yy?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
