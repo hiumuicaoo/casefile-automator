@@ -50,8 +50,27 @@ export async function generateCaseFiles(input: CaseInput): Promise<GenerateResul
     return { folderPath };
   }
 
-  // Web fallback: cần template tải lên bởi user? -> báo lỗi thân thiện
-  throw new Error(
-    "Chức năng tạo file Word chỉ chạy trong app desktop (.exe). Vui lòng build & chạy Electron trên máy có D:\\GIAMDINH\\BIEUMAU.",
-  );
+  // Web fallback: fetch templates từ /BIEUMAU/, xử lý và tải ZIP
+  const JSZip = (await import("jszip")).default;
+  const zip = new JSZip();
+  const root = zip.folder(folderName)!;
+  for (const name of TEMPLATE_FILES) {
+    const url = `/BIEUMAU/${encodeURIComponent(name)}`;
+    const res = await fetch(url);
+    if (!res.ok) {
+      throw new Error(`Không tải được biểu mẫu: ${name} (HTTP ${res.status})`);
+    }
+    const buf = await res.arrayBuffer();
+    const out = processDocx(name, buf, input);
+    root.file(name, out);
+  }
+  const zipBlob = await zip.generateAsync({ type: "blob" });
+  // Trigger download
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(zipBlob);
+  a.download = `${folderName}.zip`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  return { folderPath: null, zipBlob };
 }

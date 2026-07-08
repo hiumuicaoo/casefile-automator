@@ -14,7 +14,7 @@ export const TEMPLATE_FILES = [
   "5_B1-QUYET DINH KET THUC HO SO.docx",
   "6_B15-BAN DINH THOI HAN BAO QUAN HO SO.docx",
   "7_PHIEU CHAM DIEM.docx",
-  "X_B11-THONG BAO THONG TIN VE HO SO GDTP.doc",
+  "X_B11-THONG BAO THONG TIN VE HO SO GDTP.docx",
 ] as const;
 
 export type TemplateFileName = (typeof TEMPLATE_FILES)[number];
