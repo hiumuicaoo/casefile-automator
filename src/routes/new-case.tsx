@@ -103,12 +103,12 @@ function NewCase() {
     setSaving(true);
     try {
       let folderPath: string | null = null;
+      const r = await generateCaseFiles(input);
+      folderPath = r.folderPath;
       if (isElectron()) {
-        const r = await generateCaseFiles(input);
-        folderPath = r.folderPath;
         toast.success("Đã tạo thư mục: " + folderPath);
       } else {
-        toast.info("Chạy trên web preview — file Word chỉ sinh khi mở app .exe trên máy có D:\\GIAMDINH\\BIEUMAU.");
+        toast.success("Đã sinh 8 biểu mẫu và tải ZIP về máy (web preview).");
       }
       await insertCase(input, folderPath);
       toast.success("Đã lưu hồ sơ");
