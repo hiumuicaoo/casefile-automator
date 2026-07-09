@@ -113,14 +113,16 @@ function normalizePlaceholders(xml: string, placeholders: string[]): string {
     // Ghép các <w:t>...</w:t> bị tách khiến chuỗi placeholder không tìm thấy.
     // Tạo regex khớp chuỗi placeholder với các dấu ngắt </w:t>...</w:t> xen giữa từng ký tự.
     const chars = [...ph].map(reEsc);
-    // Cho phép giữa mỗi ký tự có 0-1 lần "</w:t>...<w:t...>"
+    // Giữa mỗi ký tự cho phép tối đa 1 lần chuyển run: </w:t></w:r><w:r ...><w:rPr>...</w:rPr><w:t ...>
+    // Giới hạn chặt để KHÔNG nuốt qua các paragraph/table/cell khác.
+    const runBreak =
+      `(?:</w:t></w:r><w:r\\b(?:(?!</w:r>|<w:p\\b|<w:tbl\\b|</w:tbl>|<w:tr\\b|</w:tr>|<w:tc\\b|</w:tc>)[\\s\\S]){0,400}<w:t[^>]*>)?`;
     const pattern = chars
-      .map((ch, i) =>
-        i === 0 ? ch : `(?:</w:t>[\\s\\S]*?<w:t[^>]*>)?${ch}`,
-      )
+      .map((ch, i) => (i === 0 ? ch : `${runBreak}${ch}`))
       .join("");
     const re = new RegExp(pattern, "g");
     out = out.replace(re, ph);
+
   }
   return out;
 }
