@@ -113,14 +113,16 @@ function normalizePlaceholders(xml: string, placeholders: string[]): string {
     // Ghép các <w:t>...</w:t> bị tách khiến chuỗi placeholder không tìm thấy.
     // Tạo regex khớp chuỗi placeholder với các dấu ngắt </w:t>...</w:t> xen giữa từng ký tự.
     const chars = [...ph].map(reEsc);
-    // Cho phép giữa mỗi ký tự có 0-1 lần "</w:t>...<w:t...>"
+    // Giữa mỗi ký tự cho phép tối đa 1 lần chuyển run: </w:t></w:r><w:r ...><w:rPr>...</w:rPr><w:t ...>
+    // Giới hạn chặt để KHÔNG nuốt qua các paragraph/table/cell khác.
+    const runBreak =
+      `(?:</w:t></w:r><w:r\\b(?:(?!</w:r>|<w:p\\b|<w:tbl\\b|</w:tbl>|<w:tr\\b|</w:tr>|<w:tc\\b|</w:tc>)[\\s\\S]){0,400}<w:t[^>]*>)?`;
     const pattern = chars
-      .map((ch, i) =>
-        i === 0 ? ch : `(?:</w:t>[\\s\\S]*?<w:t[^>]*>)?${ch}`,
-      )
+      .map((ch, i) => (i === 0 ? ch : `${runBreak}${ch}`))
       .join("");
     const re = new RegExp(pattern, "g");
     out = out.replace(re, ph);
+
   }
   return out;
 }
@@ -154,16 +156,16 @@ function stripUnusedSlots(xml: string, c: CaseInput): string {
   let out = xml;
   const hasGdv2 = !!c.giam_dinh_vien[1];
   const hasTl2 = !!c.tro_ly[1];
+  // Không thể xoá cả paragraph vì [X 1] và [X 2] thường nằm chung 1 paragraph.
+  // Chỉ xoá đúng chuỗi placeholder chưa dùng để tránh phá vỡ cấu trúc XML/bảng.
   if (!hasGdv2) {
-    // Xoá cả paragraph chứa "[Cấp bậc GĐV 2]" hoặc "[Họ và tên GĐV 2]"
-    out = out.replace(
-      /<w:p[^>]*>[\s\S]*?\[(?:Cấp bậc GĐV 2|Họ và tên GĐV 2)\][\s\S]*?<\/w:p>/g,
-      "",
-    );
+    out = out.split("[Cấp bậc GĐV 2]").join("");
+    out = out.split("[Họ và tên GĐV 2]").join("");
   }
   if (!hasTl2) {
-    out = out.replace(/<w:p[^>]*>[\s\S]*?\[Trợ lý 2\][\s\S]*?<\/w:p>/g, "");
+    out = out.split("[Trợ lý 2]").join("");
   }
+
   return out;
 }
 
