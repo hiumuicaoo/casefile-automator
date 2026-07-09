@@ -4,7 +4,6 @@
 # - PostgreSQL database lưu trữ dữ liệu trên server (/var/lib/casefile-db)
 #
 # Sử dụng:
-#   cp .env.example .env  &&  nano .env
 #   docker compose up -d --build
 #   # Sau đó truy cập: http://<hostname-tailscale>:5000  (vd: http://giamdinh:5000)
 
@@ -30,9 +29,8 @@ services:
     image: postgres:16-alpine
     hostname: postgres
     environment:
-      - POSTGRES_USER=${DB_USER:-casefile_user}
-      - POSTGRES_PASSWORD=${DB_PASSWORD:-changeme_secure_password}
-      - POSTGRES_DB=${DB_NAME:-casefile_db}
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      - POSTGRES_DB=casefile_db
       - POSTGRES_INITDB_ARGS=--encoding=UTF8 --locale=en_US.UTF-8
     volumes:
       # 📁 Dữ liệu database được lưu trữ tại /var/lib/casefile-db trên server Ubuntu
@@ -41,7 +39,7 @@ services:
       - "5432:5432"
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-casefile_user}"]
+      test: ["CMD-SHELL", "pg_isready"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -59,12 +57,10 @@ services:
       - NODE_ENV=production
       - PORT=3000
       # ===== Database Local (PostgreSQL trên server) =====
-      - DATABASE_URL=postgresql://${DB_USER:-casefile_user}:${DB_PASSWORD:-changeme_secure_password}@postgres:5432/${DB_NAME:-casefile_db}
+      - DATABASE_URL=postgresql://postgres@postgres:5432/casefile_db
       - DB_HOST=postgres
       - DB_PORT=5432
-      - DB_USER=${DB_USER:-casefile_user}
-      - DB_PASSWORD=${DB_PASSWORD:-changeme_secure_password}
-      - DB_NAME=${DB_NAME:-casefile_db}
+      - DB_NAME=casefile_db
       # ===== Supabase (nếu vẫn dùng) =====
       - SUPABASE_URL=${SUPABASE_URL}
       - SUPABASE_PUBLISHABLE_KEY=${SUPABASE_PUBLISHABLE_KEY}
