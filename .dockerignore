@@ -1,0 +1,14 @@
+node_modules
+.output
+dist
+electron-release
+.git
+.vscode
+.idea
+*.log
+.env
+.env.*
+!.env.example
+public/BIEUMAU/*.docx.bak
+README-DESKTOP.md
+electron
