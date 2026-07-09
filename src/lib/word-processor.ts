@@ -156,16 +156,16 @@ function stripUnusedSlots(xml: string, c: CaseInput): string {
   let out = xml;
   const hasGdv2 = !!c.giam_dinh_vien[1];
   const hasTl2 = !!c.tro_ly[1];
+  // Không thể xoá cả paragraph vì [X 1] và [X 2] thường nằm chung 1 paragraph.
+  // Chỉ xoá đúng chuỗi placeholder chưa dùng để tránh phá vỡ cấu trúc XML/bảng.
   if (!hasGdv2) {
-    // Xoá cả paragraph chứa "[Cấp bậc GĐV 2]" hoặc "[Họ và tên GĐV 2]"
-    out = out.replace(
-      /<w:p[^>]*>[\s\S]*?\[(?:Cấp bậc GĐV 2|Họ và tên GĐV 2)\][\s\S]*?<\/w:p>/g,
-      "",
-    );
+    out = out.split("[Cấp bậc GĐV 2]").join("");
+    out = out.split("[Họ và tên GĐV 2]").join("");
   }
   if (!hasTl2) {
-    out = out.replace(/<w:p[^>]*>[\s\S]*?\[Trợ lý 2\][\s\S]*?<\/w:p>/g, "");
+    out = out.split("[Trợ lý 2]").join("");
   }
+
   return out;
 }
 
