@@ -1,0 +1,44 @@
+# Triển khai "Quản lý hồ sơ giám định" trên Ubuntu server
+# - App chạy sau Tailscale sidecar (network_mode: service:tailscale)
+# - Chỉ expose cổng 5000 trong tailnet (không public ra Internet)
+#
+# Sử dụng:
+#   cp .env.example .env  &&  nano .env
+#   docker compose up -d --build
+#   # Sau đó truy cập: http://<hostname-tailscale>:5000  (vd: http://giamdinh:5000)
+
+services:
+  tailscale:
+    image: tailscale/tailscale:latest
+    hostname: ${TS_HOSTNAME:-giamdinh}
+    environment:
+      - TS_AUTHKEY=${TS_AUTHKEY}
+      - TS_HOSTNAME=${TS_HOSTNAME:-giamdinh}
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_USERSPACE=false
+      - TS_EXTRA_ARGS=--advertise-tags=tag:giamdinh
+    volumes:
+      - tailscale-state:/var/lib/tailscale
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - net_admin
+      - sys_module
+    restart: unless-stopped
+
+  app:
+    build: .
+    depends_on:
+      - tailscale
+    network_mode: service:tailscale
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - HOST=0.0.0.0
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_PUBLISHABLE_KEY=${SUPABASE_PUBLISHABLE_KEY}
+      - VITE_SUPABASE_URL=${VITE_SUPABASE_URL}
+      - VITE_SUPABASE_PUBLISHABLE_KEY=${VITE_SUPABASE_PUBLISHABLE_KEY}
+    restart: unless-stopped
+
+volumes:
+  tailscale-state:
