@@ -35,7 +35,11 @@ services:
     volumes:
       # 📁 Dữ liệu database được lưu trữ tại /var/lib/casefile-db trên server Ubuntu
       - /var/lib/casefile-db:/var/lib/postgresql/data
+      # Script khởi tạo schema (chỉ chạy lần đầu khi volume trống)
+      - ./db/init:/docker-entrypoint-initdb.d:ro
     ports:
+      # Mở 5432 để app .exe trên Windows kết nối trực tiếp qua tailnet (Tailscale).
+      # LƯU Ý: nếu server có IP public, dùng firewall (ufw) chặn 5432 từ Internet.
       - "5432:5432"
     restart: unless-stopped
     healthcheck:
