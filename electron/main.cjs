@@ -6,7 +6,9 @@ const path = require("path");
 const fs = require("fs");
 
 const BASE_DIR = "D:\\GIAMDINH";
-const TEMPLATE_DIR = "D:\\GIAMDINH\\BIEUMAU";
+// 2 bộ biểu mẫu tách theo cấp lãnh đạo ký.
+const TEMPLATE_DIR_TRUONGPHONG = "D:\\GIAMDINH\\BIEUMAU_TRUONGPHONG";
+const TEMPLATE_DIR_PHOTRUONGPHONG = "D:\\GIAMDINH\\BIEUMAU_PHOTRUONGPHONG";
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -27,15 +29,18 @@ app.whenReady().then(createWindow);
 app.on("window-all-closed", () => { if (process.platform !== "darwin") app.quit(); });
 app.on("activate", () => { if (BrowserWindow.getAllWindows().length === 0) createWindow(); });
 
-ipcMain.handle("get-defaults", () => ({ baseDir: BASE_DIR, templateDir: TEMPLATE_DIR }));
+ipcMain.handle("get-defaults", () => ({
+  baseDir: BASE_DIR,
+  templateDirTruongPhong: TEMPLATE_DIR_TRUONGPHONG,
+  templateDirPhoTruongPhong: TEMPLATE_DIR_PHOTRUONGPHONG,
+}));
 
 ipcMain.handle("read-template-dir", (_e, templateDir) => {
-  const dir = templateDir || TEMPLATE_DIR;
-  if (!fs.existsSync(dir)) throw new Error(`Không tìm thấy thư mục mẫu: ${dir}`);
-  const files = fs.readdirSync(dir).filter((f) => /\.(docx?|DOCX?)$/.test(f));
+  if (!fs.existsSync(templateDir)) throw new Error(`Không tìm thấy thư mục mẫu: ${templateDir}`);
+  const files = fs.readdirSync(templateDir).filter((f) => /\.(docx?|DOCX?)$/.test(f));
   return files.map((name) => ({
     name,
-    data: fs.readFileSync(path.join(dir, name)).buffer,
+    data: fs.readFileSync(path.join(templateDir, name)).buffer,
   }));
 });
 
