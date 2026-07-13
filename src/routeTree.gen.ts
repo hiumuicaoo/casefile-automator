@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as NewCaseRouteImport } from './routes/new-case'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiTemplatesRoleNameRouteImport } from './routes/api/templates.$role.$name'
 
 const NewCaseRoute = NewCaseRouteImport.update({
   id: '/new-case',
@@ -22,31 +23,40 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiTemplatesRoleNameRoute = ApiTemplatesRoleNameRouteImport.update({
+  id: '/api/templates/$role/$name',
+  path: '/api/templates/$role/$name',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/new-case': typeof NewCaseRoute
+  '/api/templates/$role/$name': typeof ApiTemplatesRoleNameRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/new-case': typeof NewCaseRoute
+  '/api/templates/$role/$name': typeof ApiTemplatesRoleNameRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/new-case': typeof NewCaseRoute
+  '/api/templates/$role/$name': typeof ApiTemplatesRoleNameRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/new-case'
+  fullPaths: '/' | '/new-case' | '/api/templates/$role/$name'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/new-case'
-  id: '__root__' | '/' | '/new-case'
+  to: '/' | '/new-case' | '/api/templates/$role/$name'
+  id: '__root__' | '/' | '/new-case' | '/api/templates/$role/$name'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   NewCaseRoute: typeof NewCaseRoute
+  ApiTemplatesRoleNameRoute: typeof ApiTemplatesRoleNameRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +75,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/templates/$role/$name': {
+      id: '/api/templates/$role/$name'
+      path: '/api/templates/$role/$name'
+      fullPath: '/api/templates/$role/$name'
+      preLoaderRoute: typeof ApiTemplatesRoleNameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   NewCaseRoute: NewCaseRoute,
+  ApiTemplatesRoleNameRoute: ApiTemplatesRoleNameRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
